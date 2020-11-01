@@ -33,10 +33,16 @@ public class Autocomplete {
       trie.insert(word);
     }
     for (String query : queries) {
-      trie.printAutoCompleteResults(query);
+      ArrayList<String> result = trie.getAutoCompleteResults(query, null, true);
+      String printResult = result.isEmpty() ? "<no matches>" : toPrintString(result);
+      System.out.println(printResult);
     }
   }
 
+  static String toPrintString(ArrayList<String> array) {
+    String arrayString = Arrays.toString(array.toArray());
+    return arrayString.substring(1, arrayString.length() - 1).replace(',', ' ');
+  }
 }
 
 class TrieNode {
@@ -64,47 +70,53 @@ class Trie {
     pointNode.isWordEnd = true;
   }
 
-  void printAutoCompleteResults(String query) {
+  ArrayList<String> getAutoCompleteResults(String query, ArrayList<String> results, boolean allowsTypo) {
     // Returns all the words in the trie whose common 
     // prefix is the given key thus listing out all  
     // the suggestions for autocomplete. 
     TrieNode pointNode = root;
     boolean notFound = false;
-    // String tempWord = "";
-    ArrayList<String> autoCompleteResults = new ArrayList<String>();
+    if (results == null) {
+      results =  new ArrayList<String>();
+    }
 
-    for (char character : query.toCharArray()) {
+    for (int i = 0; i < query.toCharArray().length; i++) {
+      if (allowsTypo) {
+        for (char character : pointNode.children.keySet()) {
+          String alterString = replaceWord(query, i, character);
+          getAutoCompleteResults(alterString, results, false);
+        } 
+      }
+      char character = query.toCharArray()[i];
       if (pointNode.children.get(character) == null) {
         notFound = true;
         break;
       }
-      // tempWord += character;
       pointNode = pointNode.children.get(character);
     }
 
     if (notFound == true) {
-      System.out.println("<no matches>");
-      return;
+      return results;
     }
 
-    traverseTrie(autoCompleteResults, pointNode, query);
-    System.out.println(toPrintString(autoCompleteResults));
-    return;
+    traverseTrie(results, pointNode, query);
+    return results;
   }
 
-  void traverseTrie(ArrayList<String> autoCompleteResults, TrieNode node, String query) {
+  void traverseTrie(ArrayList<String> results, TrieNode node, String query) {
     // Method to recursively traverse the trie
     // and return a whole word.
     if (node.isWordEnd) {
-      autoCompleteResults.add(query);
+      results.add(query);
     }
     node.children.forEach((character, nextNode) -> {
-      traverseTrie(autoCompleteResults, nextNode, query + character);
+      traverseTrie(results, nextNode, query + character);
     });
   }
 
-  String toPrintString(ArrayList<String> array) {
-    String arrayString = Arrays.toString(array.toArray());
-    return arrayString.substring(1, arrayString.length() - 1).replace(',', ' ');
+  String replaceWord(String originalWord, int replacingIndex, char replacingCharacter) {
+    char[] characters = originalWord.toCharArray();
+    characters[replacingIndex] = replacingCharacter;
+    return String.valueOf(characters);
   }
 }
