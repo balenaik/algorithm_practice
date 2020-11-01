@@ -44,7 +44,7 @@ public class Autocomplete {
 
   static String toPrintString(String[] array) {
     String arrayString = Arrays.toString(array);
-    return arrayString.substring(1, arrayString.length() - 1).replace(',', ' ');
+    return arrayString.substring(1, arrayString.length() - 1).replace(",", "") + ' ';
   }
 }
 
@@ -77,7 +77,11 @@ class Trie {
     TreeSet<String> result = autoCompleteResults(query, null, true);
     int maxArraySize = 10;
     int arraySize = result.size() < maxArraySize ? result.size() : maxArraySize;
-    return result.toArray(new String[arraySize]);
+    String[] array = result.toArray(new String[arraySize]);
+    if (arraySize == maxArraySize) {
+      return Arrays.copyOfRange(array, 0, arraySize);
+    }
+    return array;
   }
 
   TreeSet<String> autoCompleteResults(String query, TreeSet<String> results, boolean allowsTypo) {
