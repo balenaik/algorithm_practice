@@ -1,8 +1,10 @@
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Arrays;
+import java.util.HashSet;
 
 public class Autocomplete {
 
@@ -33,14 +35,14 @@ public class Autocomplete {
       trie.insert(word);
     }
     for (String query : queries) {
-      ArrayList<String> result = trie.getAutoCompleteResults(query, null, true);
-      String printResult = result.isEmpty() ? "<no matches>" : toPrintString(result);
+      String[] result = trie.getAutoCompleteResults(query);
+      String printResult = result.length == 0 ? "<no matches>" : toPrintString(result);
       System.out.println(printResult);
     }
   }
 
-  static String toPrintString(ArrayList<String> array) {
-    String arrayString = Arrays.toString(array.toArray());
+  static String toPrintString(String[] array) {
+    String arrayString = Arrays.toString(array);
     return arrayString.substring(1, arrayString.length() - 1).replace(',', ' ');
   }
 }
@@ -69,22 +71,27 @@ class Trie {
     }
     pointNode.isWordEnd = true;
   }
+  
+  String[] getAutoCompleteResults(String query) {
+    HashSet<String> result = autoCompleteResults(query, null, true);
+    return result.toArray(new String[result.size()]);
+  }
 
-  ArrayList<String> getAutoCompleteResults(String query, ArrayList<String> results, boolean allowsTypo) {
+  HashSet<String> autoCompleteResults(String query, HashSet<String> results, boolean allowsTypo) {
     // Returns all the words in the trie whose common 
     // prefix is the given key thus listing out all  
     // the suggestions for autocomplete. 
     TrieNode pointNode = root;
     boolean notFound = false;
     if (results == null) {
-      results =  new ArrayList<String>();
+      results =  new HashSet<String>();
     }
 
     for (int i = 0; i < query.toCharArray().length; i++) {
       if (allowsTypo) {
         for (char character : pointNode.children.keySet()) {
           String alterString = replaceWord(query, i, character);
-          getAutoCompleteResults(alterString, results, false);
+          autoCompleteResults(alterString, results, false);
         } 
       }
       char character = query.toCharArray()[i];
@@ -103,7 +110,7 @@ class Trie {
     return results;
   }
 
-  void traverseTrie(ArrayList<String> results, TrieNode node, String query) {
+  void traverseTrie(Set<String> results, TrieNode node, String query) {
     // Method to recursively traverse the trie
     // and return a whole word.
     if (node.isWordEnd) {
