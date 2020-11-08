@@ -34,17 +34,19 @@ public class EvaluateMathExpression {
       int digit = c - '0';
       v2 += digit * Math.pow(10, s3.length() - i - 1);
     }
+    return calculateNumbers(v1, s2, v2);
+  }
 
-    if (s2.equals("+")) {
-      // Returns first number plus second number.
-      float result = v1 + v2;
-      return result;
-    } else if (s2.equals("-")) {
-      // Returns first number minus second number.
-      float result = v1 - v2;
-      return result;
-    }
-    else {
+  public static float calculateNumbers(int number1,  String operator, int number2) {
+    if (operator.equals("+")) {
+      return number1 + number2;
+    } else if (operator.equals("-")) {
+      return number1 - number2;
+    } else if (operator.equals("*")) {
+      return number1 * number2;
+    } else if (operator.equals("/")) {
+      return number1 / number2;
+    } else {
       throw new NumberFormatException("Can't convert character an operator: +, -, /, *");
     }
   }
