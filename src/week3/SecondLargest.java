@@ -5,9 +5,6 @@ import java.util.Arrays;
 public class SecondLargest {
 	public static void secondLargest(int[] list)
 	{
-    if (!hasComparableListLength(list)) {
-      throw new IllegalArgumentException("Input list size must be at least 2.");
-    }
     if (!hasMultipleNumbers(list)) {
       Integer failedResult = -1;
       showResult(failedResult);
@@ -27,13 +24,6 @@ public class SecondLargest {
 	  }
 	  showResult(secondLargest);
 	}
-
-  public static Boolean hasComparableListLength(int[] list) {
-    if (list.length < 2) {
-      return false;
-    }
-    return true;
-  }
 
   public static Boolean hasMultipleNumbers(int[] list) {
     Integer[] integerList = Arrays.stream(list).boxed().toArray( Integer[]::new );
