@@ -1,19 +1,23 @@
 import java.util.Scanner;
+import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;
 
 public class SecondLargest {
 	public static void secondLargest(int[] list)
 	{
-    if (!hasMultipleNumbers(list)) {
+	  Integer[] integerList = Arrays.stream(list).boxed().toArray( Integer[]::new );
+    HashSet<Integer> set = new HashSet<Integer>(Arrays.asList(integerList));
+
+    if (!hasMultipleNumbers(set)) {
       Integer failedResult = -1;
       showResult(failedResult);
       return;
     }
-	  int largest = list[0];
-	  int secondLargest = 0;
-	  for(int n : list) {
-		  if (n >= largest) {
+	  int largest = Integer.MIN_VALUE;
+	  int secondLargest = Integer.MIN_VALUE;
+	  for(int n : set) {
+		  if (n > largest) {
 		    secondLargest = largest;
 		    largest = n;
 		  } else {
@@ -25,9 +29,7 @@ public class SecondLargest {
 	  showResult(secondLargest);
 	}
 
-  public static Boolean hasMultipleNumbers(int[] list) {
-    Integer[] integerList = Arrays.stream(list).boxed().toArray( Integer[]::new );
-    HashSet<Integer> set = new HashSet<Integer>(Arrays.asList(integerList));
+  public static Boolean hasMultipleNumbers(HashSet<Integer> set) {
     if (set.size() > 1) {
       return true;
     }
