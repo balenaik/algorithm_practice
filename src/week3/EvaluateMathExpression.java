@@ -49,7 +49,7 @@ public class EvaluateMathExpression {
       checkExpressionDividable(number2);
       return number1 / number2;
     } else {
-      throw new NumberFormatException("Can't convert character an operator: +, -, /, *");
+      throw new NumberFormatException("Can't convert character to operator: +, -, /, *");
     }
   }
 
