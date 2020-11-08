@@ -34,6 +34,7 @@ public class EvaluateMathExpression {
       int digit = c - '0';
       v2 += digit * Math.pow(10, s3.length() - i - 1);
     }
+
     return calculateNumbers(v1, s2, v2);
   }
 
@@ -45,9 +46,16 @@ public class EvaluateMathExpression {
     } else if (operator.equals("*")) {
       return number1 * number2;
     } else if (operator.equals("/")) {
+      checkExpressionDividable(number2);
       return number1 / number2;
     } else {
       throw new NumberFormatException("Can't convert character an operator: +, -, /, *");
+    }
+  }
+
+  public static void checkExpressionDividable(int number2) {
+    if (number2 == 0) {
+      throw new IllegalArgumentException("Can't divide by 0");
     }
   }
   
@@ -58,12 +66,8 @@ public class EvaluateMathExpression {
 		try {
 			float result = evaluateMathExpression(s);	
 			System.out.println(result);
-		}
-		catch(NumberFormatException e) {
-			System.out.println("NumberFormatException");
-		}
-		catch(IllegalArgumentException e) {
-			System.out.println("IllegalArgumentException");
-		}
+		} catch (Exception e) {
+      System.out.println(e.getClass().getSimpleName() + " " + e.getMessage());
+    }
 	}
 }
