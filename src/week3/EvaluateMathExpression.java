@@ -1,51 +1,66 @@
 import java.util.Scanner;
 
-public class EvaluateMathExpression {
-    public static float evaluateMathExpression(String s) {
-      String[] s0 = s.split(" ");
-      if (s0.length != 3) {
-      throw new IllegalArgumentException("Must have 3 tokens separated by spaces: " + s);
-      }
-      // s1 is first number.
-      String s1 = s0[0];
-      // s2 is math operator (e.g. '+').
-      String s2 = s0[1];
-      // s3 is second number.
-      String s3 = s0[2];
+class MathExpression {
+  int firstNumber;
+  String operator;
+  int secondNumber;
 
-      // first number
-      int v1 = 0;
-      for (int i = 0; i < s1.length(); i++) {
-        char c = s1.charAt(i);
-        if (c < '0' || c > '9') {
-          throw new NumberFormatException("Can't convert character to digit: " + c);
-        }
-        int digit = c - '0';
-        v1 += digit * Math.pow(10, s1.length() - i - 1);
-      }
-
-      // second number
-      int v2 = 0;
-      for (int i = 0; i < s3.length(); i++) {
-        char c = s3.charAt(i);
-        if (c < '0' || c > '9') {
-          throw new NumberFormatException("Can't convert character to digit: " + c);
-        }
-        int digit = c - '0';
-        v2 += digit * Math.pow(10, s3.length() - i - 1);
-      }
-
-      return calculateNumbers(v1, s2, v2);
+  MathExpression(int firstNumber, String operator, int secondNumber) {
+    this.firstNumber = firstNumber;
+    this.operator = operator;
+    this.secondNumber = secondNumber;
   }
 
-  public static float calculateNumbers(int number1,  String operator, int number2) {
-    if (operator.equals("+")) {
+  static MathExpression createExpression(String input) {
+    String divider = " ";
+    String[] strings = input.split(divider);
+    if (strings.length != 3) {
+      throw new IllegalArgumentException("Must have 3 tokens separated by spaces");
+    }
+    String firstString = strings[0];
+    String operator = strings[1];
+    String secondString = strings[2];
+
+    int firstNumber = 0;
+    for (int i = 0; i < firstString.length(); i++) {
+      char character = firstString.charAt(i);
+      if (character < '0' || character > '9') {
+        throw new NumberFormatException("Can't convert character to digit: " + character);
+      }
+      int digit = character - '0';
+      firstNumber += digit * Math.pow(10, firstString.length() - i - 1);
+    }
+
+    int secondNumber = 0;
+    for (int i = 0; i < secondString.length(); i++) {
+      char character = secondString.charAt(i);
+      if (character < '0' || character > '9') {
+        throw new NumberFormatException("Can't convert character to digit: " + character);
+      }
+      int digit = character - '0';
+      secondNumber += digit * Math.pow(10, secondString.length() - i - 1);
+    }
+
+    return new MathExpression(firstNumber, operator, secondNumber);
+  }
+}
+
+public class EvaluateMathExpression {
+    public static float evaluateMathExpression(String s) {
+      MathExpression expression = MathExpression.createExpression(s);
+      return calculateNumbers(expression);
+  }
+
+  public static float calculateNumbers(MathExpression expression) {
+    int number1 = expression.firstNumber;
+    int number2 = expression.secondNumber;
+    if (expression.operator.equals("+")) {
       return number1 + number2;
-    } else if (operator.equals("-")) {
+    } else if (expression.operator.equals("-")) {
       return number1 - number2;
-    } else if (operator.equals("*")) {
+    } else if (expression.operator.equals("*")) {
       return number1 * number2;
-    } else if (operator.equals("/")) {
+    } else if (expression.operator.equals("/")) {
       checkExpressionDividable(number2);
       return (float) number1 / (float) number2;
     } else {
@@ -60,7 +75,7 @@ public class EvaluateMathExpression {
   }
   
   public static void main(String[] args) {
-	Scanner cin = new Scanner(System.in);
+	  Scanner cin = new Scanner(System.in);
     String s = cin.nextLine();
     cin.close();
     try {
